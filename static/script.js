@@ -532,9 +532,92 @@ document.addEventListener('click', e => {
                                                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
                                                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                                                 <title>Summary</title>
+                                                <style>
+                                                    html {
+                                                        color-scheme: dark;
+                                                    }
+
+                                                    body {
+                                                        font-family: system-ui;
+                                                        background-color: #222;
+                                                        color: #fff;
+                                                        margin: 0;
+                                                    }
+
+                                                    .toolbar {
+                                                        background-color: #333;
+                                                        width: 100%;
+                                                        display: flex;
+                                                        flex-wrap: wrap;
+                                                    }
+
+                                                    .tool {
+                                                        padding: 4px;
+                                                        cursor: default;
+                                                        transition: background 200ms;
+                                                    }
+
+                                                    .tool:hover {
+                                                        background-color: #444;
+                                                    }
+
+                                                    .tool.active {
+                                                        background-color: #8c53df;
+                                                    }
+
+                                                    .summary {
+                                                        padding: 8px;
+                                                    }
+                                                </style>
                                             </head>
-                                            <body style="font-family: system-ui;">
-                                                ${summary}
+                                            <body>
+                                                <div class="toolbar">
+                                                    <div class="tool" id="copy">Copy</div>
+                                                    <div class="tool" id="read-aloud">Read Aloud</div>
+                                                </div>
+                                                <div class="summary">${summary}</div>
+                                                <script>
+                                                    const copy = document.querySelector('#copy');
+                                                    const readAloud = document.querySelector('#read-aloud');
+                                                    const text = document.querySelector('.summary');
+
+                                                    copy.addEventListener('click', () => {
+                                                        navigator.clipboard.writeText(text.textContent);
+                                                        message('Summary has been copied to clipboard');
+                                                    });
+
+                                                    readAloud.addEventListener('click', () => {
+                                                        readAloud.classList.toggle('active');
+                                                        const msg = new SpeechSynthesisUtterance(text.textContent);
+                                                        msg.lang = 'en-US';
+
+                                                        if (readAloud.classList.contains('active')) {
+                                                            speechSynthesis.speak(msg);
+                                                        } else {
+                                                            speechSynthesis.cancel();
+                                                        }
+
+                                                        msg.onend = () => {
+                                                            readAloud.classList.remove('active');
+                                                        };
+                                                    });
+
+                                                    function message(msg) {
+                                                        const toolbar = document.querySelector('.toolbar');
+
+                                                        const message = document.createElement('div');
+                                                        message.textContent = msg;
+                                                        message.classList.add('tool');
+                                                        message.id = 'Message';
+                                                        message.style.width = '100%';
+                                                        message.style.textAlign = 'center';
+                                                        toolbar.appendChild(message);
+
+                                                        setTimeout(() => {
+                                                            message.remove();
+                                                        }, 3000);
+                                                    }
+                                                </script>
                                             </body>
                                             `);
                                         });
