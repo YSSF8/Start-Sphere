@@ -188,5 +188,18 @@ def summarize_page():
     else:
         return 'An error occured while trying to summarize the page', 500
 
+@app.route('/suggestions')
+def suggestions():
+    q = request.args.get('q')
+
+    if q == None:
+        return 'Query parameter is missing', 400
+    
+    try:
+        response = requests.get(f'https://duckduckgo.com/ac/?q={q}&kl=wt-wt')
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        return f'An error occurred: {str(e)}', 500
+
 if __name__ == '__main__':
     app.run(debug=True)

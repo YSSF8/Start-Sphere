@@ -39,6 +39,27 @@ body {
   display: flex;
   gap: 3px;
   justify-content: center;
+  position: relative;
+}
+
+.suggestion-zone {
+  position: absolute;
+  width: 5in;
+  padding: var(--default-br-p);
+  border-radius: var(--default-br-p);
+  background-color: var(--default-color);
+  transform: translateY(3rem);
+  display: none;
+  z-index: 12;
+}
+.suggestion-zone .search-suggestion {
+  padding: var(--default-br-p);
+  border-radius: var(--default-br-p);
+  cursor: pointer;
+  transition: background 200ms;
+}
+.suggestion-zone .search-suggestion:hover {
+  background-color: var(--default-hover);
 }
 
 input,
@@ -190,6 +211,7 @@ img {
   opacity: 0;
   transition: 200ms;
   transition-property: transform, opacity;
+  z-index: 20;
 }
 .visit-window .window-header {
   display: flex;
@@ -301,6 +323,7 @@ a {
   transform: scale(0.7) translate(-50%, -50%);
   transition: box-shadow 200ms;
   animation: popup 200ms forwards;
+  z-index: 9999;
 }
 .fav-menu *,
 .settings * {

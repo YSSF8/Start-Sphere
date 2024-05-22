@@ -14,6 +14,7 @@ window.addEventListener('DOMContentLoaded', () => {
 const settingsBtn = document.getElementById('btn-settings');
 const input = document.getElementById("search");
 const searchBtn = document.getElementById("btn-search");
+const suggestionZone = document.querySelector('.suggestion-zone');
 const add = document.querySelector('.item.add');
 const fav = document.getElementById('fav');
 let favorites = JSON.parse(localStorage.getItem('fav')) || [];
@@ -27,7 +28,57 @@ searchBtn.addEventListener('click', () => {
 });
 
 input.addEventListener('keyup', e => {
-    if (e.key == 'Enter') searchBtn.click();
+    const suggestions = Array.from(suggestionZone.querySelectorAll('.search-suggestion'));
+
+    if (suggestions.length > 0) {
+        if (e.key === 'ArrowDown') {
+            if (currentIndex < suggestions.length - 1) {
+                currentIndex++;
+                highlightSuggestion(suggestions, currentIndex);
+            }
+        } else if (e.key === 'ArrowUp') {
+            if (currentIndex > 0) {
+                currentIndex--;
+                highlightSuggestion(suggestions, currentIndex);
+            }
+        } else if (e.key === 'Enter') {
+            if (currentIndex >= 0 && currentIndex < suggestions.length) {
+                input.value = suggestions[currentIndex].textContent;
+                suggestionZone.style.display = 'none';
+                e.preventDefault();
+                searchBtn.click();
+            }
+        }
+    }
+});
+
+function highlightSuggestion(suggestions, index) {
+    suggestions.forEach((suggestion, i) => {
+        suggestion.style.backgroundColor = i === index ? 'var(--default-hover)' : 'transparent';
+    });
+}
+
+let currentIndex = -1;
+
+input.addEventListener('input', () => {
+    if (input.value.trim() === '') suggestionZone.style.removeProperty('display');
+
+    fetch('/suggestions?q=' + encodeURIComponent(input.value))
+        .then(response => response.json())
+        .then(data => {
+            const suggestions = data.map(suggestion => suggestion.phrase);
+            suggestionZone.style.display = suggestions.length > 0 ? 'block' : 'none';
+            suggestionZone.innerHTML = suggestions.map(suggestion => `<a href="${getSearchEngineURL(localStorage.getItem('searchEngine')) + suggestion}"><div class="search-suggestion">${suggestion}</div></a>`).join('');
+            currentIndex = -1;
+        });
+});
+
+input.addEventListener('focusin', () => {
+    suggestionZone.style.display = input.value.trim() === '' ? 'none' : 'block';
+});
+
+input.addEventListener('focusout', () => {
+    suggestionZone.style.display = 'none';
 });
 
 add.addEventListener('click', () => {
