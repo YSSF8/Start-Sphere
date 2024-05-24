@@ -14,7 +14,8 @@
   color: var(--text-color);
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
 }
@@ -48,7 +49,7 @@ body {
   padding: var(--default-br-p);
   border-radius: var(--default-br-p);
   background-color: var(--default-color);
-  transform: translateY(3rem);
+  transform: translate(-4.5%, 3rem);
   display: none;
   z-index: 12;
 }
@@ -77,34 +78,43 @@ button#search,
 select#search {
   width: 5in;
 }
-input#btn-search, input#btn-settings,
+input#btn-search, input#btn-settings, input#btn-microphone,
 button#btn-search,
 button#btn-settings,
+button#btn-microphone,
 select#btn-search,
-select#btn-settings {
+select#btn-settings,
+select#btn-microphone {
   width: -moz-max-content;
   width: max-content;
   cursor: pointer;
   transition: background 200ms;
 }
-input#btn-search:hover, input#btn-settings:hover,
+input#btn-search:hover, input#btn-settings:hover, input#btn-microphone:hover,
 button#btn-search:hover,
 button#btn-settings:hover,
+button#btn-microphone:hover,
 select#btn-search:hover,
-select#btn-settings:hover {
+select#btn-settings:hover,
+select#btn-microphone:hover {
   background-color: var(--default-hover);
 }
 input#btn-search svg,
 input#btn-search svg *, input#btn-settings svg,
-input#btn-settings svg *,
+input#btn-settings svg *, input#btn-microphone svg,
+input#btn-microphone svg *,
 button#btn-search svg,
 button#btn-search svg *,
 button#btn-settings svg,
 button#btn-settings svg *,
+button#btn-microphone svg,
+button#btn-microphone svg *,
 select#btn-search svg,
 select#btn-search svg *,
 select#btn-settings svg,
-select#btn-settings svg * {
+select#btn-settings svg *,
+select#btn-microphone svg,
+select#btn-microphone svg * {
   fill: var(--unique-white);
 }
 input.sets,
@@ -115,6 +125,24 @@ select.sets {
 
 img {
   height: 30px;
+}
+
+.recording {
+  --color: #d13939;
+  background-color: var(--color);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  scale: 0.7;
+}
+.recording::before {
+  content: "";
+  display: block;
+  border: 3px solid var(--color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-11px, -11px);
 }
 
 #fav {

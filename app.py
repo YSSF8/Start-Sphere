@@ -139,10 +139,9 @@ headers = {
     "priority": "u=1, i"
 }
 
-@app.route('/predict_title', methods=['POST'])
-def predict_title():
-    data = {
-        "messages": [{"id": "2wlAo5V", "content": f"Predict this website's name: {request.json.get('url')} (You are not allowed to respond with more than the website's name)", "role": "user"}],
+def use_blackbox_api(text):
+    return {
+        "messages": [{"id": "2wlAo5V", "content": text, "role": "user"}],
         "id": "2wlAo5V",
         "previewToken": None,
         "userId": "618dc8aa-5c9d-4282-9e8d-5520da5f7ea0",
@@ -156,6 +155,10 @@ def predict_title():
         "clickedAnswer3": False,
         "visitFromURL": None
     }
+
+@app.route('/predict_title', methods=['POST'])
+def predict_title():
+    data = use_blackbox_api(f"Predict this website's name: {request.json.get('url')} (You are not allowed to respond with more than the website's name)")
     response = requests.post(blackbox_url, json=data, headers=headers)
     if response.status_code == 200:
         data = response.text
@@ -165,21 +168,7 @@ def predict_title():
     
 @app.route('/summarize_page', methods=['POST'])
 def summarize_page():
-    data = {
-        "messages": [{"id": "2wlAo5V", "content": f"Summarize the following page in 1 very short paragraph, I'm lazy to read lots of stuff:\n\n{request.json.get('content')}", "role": "user"}],
-        "id": "2wlAo5V",
-        "previewToken": None,
-        "userId": "618dc8aa-5c9d-4282-9e8d-5520da5f7ea0",
-        "codeModelMode": True,
-        "agentMode": {},
-        "trendingAgentMode": {},
-        "isMicMode": False,
-        "isChromeExt": False,
-        "githubToken": None,
-        "clickedAnswer2": False,
-        "clickedAnswer3": False,
-        "visitFromURL": None
-    }
+    data = use_blackbox_api(f"Summarize the following page in 1 very short paragraph, I'm lazy to read lots of stuff:\n\n{request.json.get('content')}")
 
     response = requests.post(blackbox_url, json=data, headers=headers)
     if response.status_code == 200:

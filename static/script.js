@@ -14,6 +14,7 @@ window.addEventListener('DOMContentLoaded', () => {
 const settingsBtn = document.getElementById('btn-settings');
 const input = document.getElementById("search");
 const searchBtn = document.getElementById("btn-search");
+const microphoneBtn = document.getElementById("btn-microphone");
 const suggestionZone = document.querySelector('.suggestion-zone');
 const add = document.querySelector('.item.add');
 const fav = document.getElementById('fav');
@@ -27,6 +28,34 @@ searchBtn.addEventListener('click', () => {
     location.href = getSearchEngineURL(localStorage.getItem('searchEngine')) + input.value;
 });
 
+microphoneBtn.addEventListener('click', () => {
+    let ogMic = microphoneBtn.innerHTML;
+    microphoneBtn.innerHTML = '<div class="recording"></div>';
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+    recognition.maxAlternatives = 1;
+    recognition.start();
+    recognition.addEventListener('start', () => {
+        popup('Listening...');
+    });
+    recognition.addEventListener('result', e => {
+        const text = e.results[0][0].transcript;
+        input.value = text;
+        searchBtn.click();
+    });
+    recognition.addEventListener('error', e => {
+        popup(e.error);
+    });
+    recognition.addEventListener('end', () => {
+        microphoneBtn.innerHTML = ogMic;
+    });
+});
+
+let ogInput = '';
+
 input.addEventListener('keyup', e => {
     const suggestions = Array.from(suggestionZone.querySelectorAll('.search-suggestion'));
 
@@ -35,40 +64,68 @@ input.addEventListener('keyup', e => {
             if (currentIndex < suggestions.length - 1) {
                 currentIndex++;
                 highlightSuggestion(suggestions, currentIndex);
+                input.value = suggestions[currentIndex].textContent;
             }
         } else if (e.key === 'ArrowUp') {
             if (currentIndex > 0) {
                 currentIndex--;
-                highlightSuggestion(suggestions, currentIndex);
+            } else if (currentIndex === 0) {
+                currentIndex = -1;
+                input.value = ogInput;
+            }
+            highlightSuggestion(suggestions, currentIndex);
+            if (currentIndex >= 0) {
+                input.value = suggestions[currentIndex].textContent;
             }
         } else if (e.key === 'Enter') {
             if (currentIndex >= 0 && currentIndex < suggestions.length) {
-                input.value = suggestions[currentIndex].textContent;
+                suggestionZone.style.display = 'none';
+                e.preventDefault();
+                searchBtn.click();
+            } else {
                 suggestionZone.style.display = 'none';
                 e.preventDefault();
                 searchBtn.click();
             }
         }
+    } else if (e.key === 'Enter') {
+        suggestionZone.style.display = 'none';
+        e.preventDefault();
+        searchBtn.click();
     }
 });
 
 function highlightSuggestion(suggestions, index) {
     suggestions.forEach((suggestion, i) => {
-        suggestion.style.backgroundColor = i === index ? 'var(--default-hover)' : 'transparent';
+        if (index === -1) {
+            suggestion.style.backgroundColor = 'transparent';
+        } else {
+            suggestion.style.backgroundColor = i === index ? 'var(--default-hover)' : 'transparent';
+        }
     });
 }
 
 let currentIndex = -1;
 
 input.addEventListener('input', () => {
-    if (input.value.trim() === '') suggestionZone.style.removeProperty('display');
+    ogInput = input.value;
 
-    fetch('/suggestions?q=' + encodeURIComponent(input.value))
+    const query = input.value.trim();
+    if (query === '') {
+        suggestionZone.style.removeProperty('display');
+        return;
+    }
+
+    fetch('/suggestions?q=' + encodeURIComponent(query))
         .then(response => response.json())
         .then(data => {
             const suggestions = data.map(suggestion => suggestion.phrase);
             suggestionZone.style.display = suggestions.length > 0 ? 'block' : 'none';
-            suggestionZone.innerHTML = suggestions.map(suggestion => `<a href="${getSearchEngineURL(localStorage.getItem('searchEngine')) + suggestion}"><div class="search-suggestion">${suggestion}</div></a>`).join('');
+            suggestionZone.innerHTML = suggestions.map(suggestion => {
+                const parts = suggestion.split(query);
+                const highlighted = `<b>${parts.join(`</b>${query}<b>`)}</b>`;
+                return `<a href="${getSearchEngineURL(localStorage.getItem('searchEngine')) + suggestion}"><div class="search-suggestion">${highlighted}</div></a>`;
+            }).join('');
             currentIndex = -1;
         });
 });
@@ -203,8 +260,8 @@ add.addEventListener('click', () => {
                     title.value = '';
                 });
         } else if (lowerCaseTitle == '/expect') {
-            const urlValue = url.value.split(/https?:\/\//g)[1].split(/\./g);
-            const lastWordBeforeDot = urlValue[urlValue.length - 2];
+            const urlValue = url.value.split(/https?:\/\//i)[1].split(/\./);
+            const lastWordBeforeDot = urlValue[urlValue.length - 2].toLowerCase();
             const firstChar = lastWordBeforeDot.charAt(0).toUpperCase() + lastWordBeforeDot.slice(1);
             title.value = firstChar.indexOf('-') != -1 ? firstChar.replace('-', '') : firstChar;
         } else if (lowerCaseTitle == '/predict') {
