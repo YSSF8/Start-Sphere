@@ -728,6 +728,8 @@ document.addEventListener('click', e => {
                                                 </script>
                                             </body>
                                             `);
+                                        }).catch(error => {
+                                            popup(`An error occured: ${error.message}`);
                                         });
                                         popup('Summarizing is in progress, this may take a while');
                                         break;
@@ -1090,7 +1092,7 @@ async function predictTitle(url) {
         let final = {
             version: version,
             sources: sources,
-            result: result
+            result: result.replace(/(?<=\W)\W+|\W+(?=\W)/g, '')
         }
 
         return final;
@@ -1111,7 +1113,7 @@ async function summarizePage(content) {
             })
         });
         const data = await response.text();
-        return data.match(/\$@\$v=(.*?)\$@\$(.*)$/)?.[2] || 'An error occured. Please try again later.';
+        return data.match(/\$@\$v=v(.+)\$@\$([\s\S]*)/)?.[2] || 'An error occured. Please try again later.';
     } catch (error) {
         popup(`An error occured: ${error.message}`);
     }
