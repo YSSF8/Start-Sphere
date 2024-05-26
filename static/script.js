@@ -110,7 +110,7 @@ let currentIndex = -1;
 input.addEventListener('input', () => {
     ogInput = input.value;
 
-    const query = input.value.trim();
+    const query = input.value.trim().toLowerCase();
     if (query === '') {
         suggestionZone.style.removeProperty('display');
         return;
@@ -135,7 +135,7 @@ input.addEventListener('focusin', () => {
 });
 
 input.addEventListener('focusout', () => {
-    suggestionZone.style.display = 'none';
+    setTimeout(() => suggestionZone.style.display = 'none', 100);
 });
 
 add.addEventListener('click', () => {
