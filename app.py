@@ -189,6 +189,31 @@ def suggestions():
         return response.json()
     except requests.exceptions.RequestException as e:
         return f'An error occurred: {str(e)}', 500
+    
+@app.route('/chat')
+def chat():
+    return render_template('chat.html')
+
+@app.route('/message_ai', methods=['POST'])
+def message_ai():
+    data = {
+    	"messages": request.json.get('messages'),
+    	"id": "gJP6OjF",
+    	"previewToken": None,
+    	"userId": "810628f1-054b-439c-b4df-e6161cb5d024",
+    	"codeModelMode": True,
+    	"agentMode": {},
+    	"trendingAgentMode": {},
+    	"isMicMode": False,
+    	"isChromeExt": False,
+    	"githubToken": None,
+    	"clickedAnswer2": False,
+    	"clickedAnswer3": False,
+    	"visitFromDelta": None
+    }
+
+    response = requests.post(blackbox_url, json=data, headers=headers)
+    return response.text
 
 if __name__ == '__main__':
     app.run(debug=True)
