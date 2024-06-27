@@ -9,6 +9,9 @@
     --default-white: #fff;
     --default-grey: #9a9a9a;
     --default-border: #444;
+    --default-danger: #c03838;
+    --default-danger-2: #a02828;
+    --default-danger-3: #801818;
 }
 
 * {
@@ -86,9 +89,72 @@ body {
             text-align: left;
             background-color: transparent;
             cursor: pointer;
-            
+
             &:hover {
                 background-color: var(--default-color-b);
+            }
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+
+            &:hover>.history-name::after {
+                background: linear-gradient(to left, var(--default-color-b), var(--default-color-b), transparent);
+            }
+
+            .history-name {
+                width: 100%;
+                overflow: hidden;
+                position: relative;
+
+                &::after {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    height: 100%;
+                    width: 40px;
+                    background: linear-gradient(to left, var(--default-color-3), var(--default-color-3), transparent);
+                }
+            }
+
+            .history-dots {
+                display: flex;
+                gap: 3px;
+                height: 100%;
+                align-items: center;
+
+                &:active>.history-dot {
+                    background-color: var(--default-grey);
+                }
+
+                .history-dot {
+                    background-color: var(--default-white);
+                    border-radius: 50%;
+                    width: 3px;
+                    height: 3px;
+                }
+            }
+
+            .context-menu {
+                position: absolute;
+                top: 0;
+                background-color: var(--default-color-2);
+                border-radius: var(--default-br-p);
+                padding: calc(var(--default-border) / 2);
+                overflow: hidden;
+                border: 1px solid var(--default-border);
+
+                .context-menu-item {
+                    padding: var(--default-br-p);
+
+                    &:hover {
+                        background-color: var(--default-color-3);
+                    }
+                }
             }
         }
 
@@ -140,7 +206,7 @@ body {
     display: flex;
     align-items: center;
     cursor: pointer;
-    
+
     span {
         color: #000;
     }
@@ -156,10 +222,18 @@ body {
     height: 100%;
 
     h2 {
-        background: linear-gradient(to right, #750077, #fcb59d, #00ebf9);
+        background: linear-gradient(to right, #750077, #fcb59d, #00ebf9, #fcb59d, #750077);
         width: max-content;
         background-clip: text;
         color: transparent;
+        background-size: 200%;
+        animation: gradient-movement 5s linear infinite;
+    }
+}
+
+@keyframes gradient-movement {
+    to {
+        background-position: 200%;
     }
 }
 
@@ -348,6 +422,41 @@ table {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 3px;
+
+            &.popup-content-promise {
+                display: block;
+            }
+        }
+
+        .popup-footer {
+            float: right;
+            margin: calc(var(--default-br-p) * 2) 0 var(--default-br-p) 0;
+
+            button {
+                all: unset;
+                border-radius: var(--default-br-p);
+                padding: var(--default-br-p);
+                cursor: pointer;
+                width: 4rem;
+                text-align: center;
+
+                &.popup-ok {
+                    background-color: var(--default-danger);
+                    transition: background 200ms;
+
+                    &:hover {
+                        background-color: var(--default-danger-2);
+                    }
+
+                    &:active {
+                        background-color: var(--default-danger-3);
+                    }
+                }
+
+                &.popup-cancel:hover {
+                    text-decoration: underline;
+                }
+            }
         }
     }
 }
