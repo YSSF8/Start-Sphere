@@ -99,6 +99,7 @@ body {
             display: flex;
             justify-content: space-between;
             position: relative;
+            -webkit-tap-highlight-color: transparent;
 
             &:hover>.history-name::after {
                 background: linear-gradient(to left, var(--default-color-b), var(--default-color-b), transparent);
@@ -147,6 +148,7 @@ body {
                 padding: calc(var(--default-border) / 2);
                 overflow: hidden;
                 border: 1px solid var(--default-border);
+                z-index: 1;
 
                 .context-menu-item {
                     padding: var(--default-br-p);
@@ -495,6 +497,10 @@ br {
 
         .expand {
             top: 45%;
+        }
+
+        .column.body {
+            height: calc(100% - 1.8in);
         }
     }
 

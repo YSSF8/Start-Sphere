@@ -254,7 +254,7 @@ function loadHistory() {
             rename() {
                 const newConversationName = prompt('Enter a new name for this conversation');
                 if (newConversationName.trim() === '') {
-                    alert('Conversation name cannot be empty', historyName.textContent);
+                    alert('Conversation name cannot be empty');
                     return;
                 }
 
@@ -263,9 +263,12 @@ function loadHistory() {
                 const currentMessages = JSON.parse(localStorage.getItem('messages'));
                 if (currentMessages) {
                     const updatedMessages = {};
-                    for (let [key, value] of Object.entries(currentMessages)) {
-                        console.log(key, value);
-                        updatedMessages[newConversationName] = value;
+                    for (let [oldKey, value] of Object.entries(currentMessages)) {
+                        if (oldKey === key) {
+                            updatedMessages[newConversationName] = value;
+                        } else {
+                            updatedMessages[oldKey] = value;
+                        }
                     }
                     localStorage.setItem('messages', JSON.stringify(updatedMessages));
 
@@ -300,7 +303,11 @@ function loadHistory() {
                 <div class="context-menu-item" data-action="delete">Delete</div>
                 `;
                 historyConversation.appendChild(contextMenu);
+
                 contextMenu.style.left = `${e.clientX}px`;
+                if (contextMenu.offsetLeft + contextMenu.offsetWidth > window.innerWidth) {
+                    contextMenu.style.left = `${e.clientX - contextMenu.offsetWidth - 30}px`;
+                }
 
                 contextMenu.querySelectorAll('.context-menu-item').forEach(item => {
                     item.addEventListener('click', () => {
@@ -334,7 +341,7 @@ function loadHistory() {
                         <img src="static/images/${message.role === 'user' ? 'avatar.jpg' : 'ai.png'}" height="24" alt="">
                         <span>${message.role === 'user' ? 'You' : 'Start Sphere AI'}</span>
                     </div>
-                    <div class="message-content">${marked.parse(message.role === 'user' ? (regex ? message.content.match(/@JSON\s-(.*)/g)[0].split('-')[1].trim() : '') : message.content)}</div>
+                    <div class="message-content">${marked.parse(message.role === 'user' ? (regex ? message.content.match(/@JSON\s-([\s\S]*)/g)[0].replace(/@JSON\s-/, '').trim() : '') : message.content)}</div>
                     `;
                     messageContainer.appendChild(newMessage);
                 }
@@ -344,6 +351,7 @@ function loadHistory() {
                 document.querySelector('.message').remove();
                 const center = document.querySelector('center');
                 if (center) center.remove();
+                messageContainer.scrollTop = messageContainer.scrollHeight;
             }
         });
     }
