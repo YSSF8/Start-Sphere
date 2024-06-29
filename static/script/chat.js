@@ -141,36 +141,12 @@ function sendMessage(message) {
 
             let copyIcon = copy.querySelector('svg').outerHTML;
 
-            copy.addEventListener('click', () => {
-                navigator.clipboard.writeText(newData.content);
-                copy.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -0.5 25 25" fill="none">
-                    <path d="M5.5 12.5L10.167 17L19.5 8" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                `;
-                setTimeout(() => {
-                    copy.innerHTML = copyIcon;
-                }, 2000);
+            copyToClipboard({
+                copy: copy,
+                oldIcon: copyIcon,
+                message: newData.content
             });
-
-            readAloud.addEventListener('click', () => {
-                readAloud.classList.toggle('_reading');
-
-                if (readAloud.classList.contains('_reading')) {
-                    const utterance = new SpeechSynthesisUtterance(newData.content);
-                    utterance.lang = 'en-US';
-                    speechSynthesis.speak(utterance);
-
-                    utterance.addEventListener('end', () => {
-                        readAloud.classList.remove('_reading');
-                    });
-                    utterance.addEventListener('error', () => {
-                        readAloud.classList.remove('_reading');
-                    });
-                } else {
-                    speechSynthesis.cancel();
-                }
-            });
+            readMessage(readAloud, newData.content);
 
             messages.push({
                 id: 'gJP6OjF',
@@ -222,6 +198,46 @@ function highlightCodeBlocks(response) {
                 copyCode.textContent = 'Copy';
             }, 2000);
         });
+    });
+}
+
+function readMessage(readAloud, message) {
+    readAloud.addEventListener('click', () => {
+        readAloud.classList.toggle('_reading');
+
+        if (readAloud.classList.contains('_reading')) {
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.lang = 'en-US';
+            speechSynthesis.speak(utterance);
+
+            utterance.addEventListener('end', () => {
+                readAloud.classList.remove('_reading');
+            });
+            utterance.addEventListener('error', () => {
+                readAloud.classList.remove('_reading');
+            });
+        } else {
+            speechSynthesis.cancel();
+        }
+    });
+}
+
+function copyToClipboard({
+    copy,
+    oldIcon,
+    message,
+    delay = 2000
+} = {}) {
+    copy.addEventListener('click', () => {
+        navigator.clipboard.writeText(message);
+        copy.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 -0.5 25 25" fill="none">
+            <path d="M5.5 12.5L10.167 17L19.5 8" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        `;
+        setTimeout(() => {
+            copy.innerHTML = oldIcon;
+        }, delay);
     });
 }
 
@@ -341,9 +357,37 @@ function loadHistory() {
                         <img src="static/images/${message.role === 'user' ? 'avatar.jpg' : 'ai.png'}" height="24" alt="">
                         <span>${message.role === 'user' ? 'You' : 'Start Sphere AI'}</span>
                     </div>
-                    <div class="message-content">${marked.parse(message.role === 'user' ? (regex ? message.content.match(/@JSON\s-([\s\S]*)/g)[0].replace(/@JSON\s-/, '').trim() : '') : message.content)}</div>
+                    <div class="message-content">
+                        <p>${marked.parse(message.role === 'user' ? (regex ? message.content.match(/@JSON\s-([\s\S]*)/g)[0].replace(/@JSON\s-/, '').trim() : '') : message.content)}</p>
+                        <div class="options horizontal-view">
+                            ${message.role === 'assistant' ? `<div class="option copy">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" version="1.1" viewBox="0.00 0.00 512.00 512.00" fill="#ffffff">
+                                    <path d="   M 83.87 348.77   C 77.27 367.06 51.01 367.07 44.11 348.78   Q 42.76 345.20 42.76 338.41   Q 42.74 204.98 42.75 71.56   Q 42.75 58.19 44.28 52.58   C 48.28 37.87 60.70 26.07 75.42 22.56   Q 80.82 21.27 95.31 21.26   Q 202.40 21.24 309.48 21.25   Q 322.92 21.25 327.35 22.81   C 346.40 29.51 345.42 56.21 326.77 62.69   Q 323.01 64.00 316.45 64.00   Q 215.35 64.02 114.25 63.97   Q 103.80 63.97 99.40 65.48   C 86.53 69.90 85.24 80.61 85.25 93.64   Q 85.25 215.60 85.25 337.56   Q 85.25 344.96 83.87 348.77   Z"/>
+                                    <path d="   M 172.50 490.92   C 152.40 490.94 134.24 478.02 129.34 458.39   Q 128.00 453.03 128.00 438.50   Q 128.00 298.50 128.00 158.49   Q 128.00 144.32 129.44 138.62   C 133.15 124.01 145.11 112.02 159.84 108.11   Q 164.93 106.76 174.91 106.76   Q 286.35 106.74 397.79 106.75   Q 410.94 106.75 416.59 108.26   C 430.97 112.11 442.75 124.01 446.54 138.49   Q 447.99 144.01 447.99 157.26   Q 448.01 302.25 447.95 447.25   C 447.94 466.82 434.98 484.62 415.83 489.33   Q 410.13 490.72 395.94 490.73   Q 284.22 490.79 172.50 490.92   Z   M 405.25 170.73   A 21.47 21.47 0.0 0 0 383.78 149.26   L 192.22 149.26   A 21.47 21.47 0.0 0 0 170.75 170.73   L 170.75 426.53   A 21.47 21.47 0.0 0 0 192.22 448.00   L 383.78 448.00   A 21.47 21.47 0.0 0 0 405.25 426.53   L 405.25 170.73   Z"/>
+                                </svg>
+                            </div>
+                            <div class="option read-aloud">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M19 6C20.5 7.5 21 10 21 12C21 14 20.5 16.5 19 18M16 8.99998C16.5 9.49998 17 10.5 17 12C17 13.5 16.5 14.5 16 15M3 10.5V13.5C3 14.6046 3.5 15.5 5.5 16C7.5 16.5 9 21 12 21C14 21 14 3 12 3C9 3 7.5 7.5 5.5 8C3.5 8.5 3 9.39543 3 10.5Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>` : ''}
+                        </div>
+                        <div class="sources horizontal-view"></div>
+                    </div>
                     `;
                     messageContainer.appendChild(newMessage);
+
+                    const copy = newMessage.querySelector('.copy');
+                    const readAloud = newMessage.querySelector('.read-aloud');
+                    if (copy) {
+                        let copyIcon = newMessage.querySelector('svg').outerHTML;
+                        copyToClipboard({
+                            copy: copy,
+                            oldIcon: copyIcon,
+                            message: message.content
+                        });
+                        readMessage(readAloud, message.content);
+                    }
                 }
                 messages = value;
                 hljs.highlightAll();
@@ -467,7 +511,51 @@ expand.addEventListener('click', () => {
             container.style.gridTemplateColumns = '0 1fr';
         }
     }
+});
 
+const importHistory = document.querySelector('.import-history');
+const exportHistory = document.querySelector('.export-history');
+
+function stringToBinary(str) {
+    return Array.from(str).map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+}
+
+function binaryToString(str) {
+    return Array.from(str.matchAll(/\d{8}/g)).map(m => String.fromCharCode(parseInt(m[0], 2))).join('');
+}
+
+exportHistory.addEventListener('click', () => {
+    const messages = JSON.parse(localStorage.getItem('messages'));
+    if (!messages || Object.keys(messages).length === 0) {
+        popupWindow('Error', '<div style="width: max-content; margin: 4px 6pc 4px 0; font-size: 16px;" class="temp-error-message">No chat history found</div>');
+        document.querySelector('.temp-error-message').parentElement.style.display = 'block';
+        return;
+    }
+    const json = JSON.stringify(messages, null, 2);
+    const blob = new Blob([stringToBinary(json)], { type: 'application/x-ssch' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'chat-history.ssch';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+});
+
+importHistory.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.ssch';
+    input.addEventListener('change', async () => {
+        const file = input.files[0];
+        const text = binaryToString(await file.text());
+        const messages = JSON.parse(text);
+        localStorage.setItem('messages', JSON.stringify(messages));
+        location.reload();
+    });
+    input.click();
+    input.remove();
 });
 
 messageContainer.addEventListener('scroll', () => {
