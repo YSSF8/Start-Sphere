@@ -319,11 +319,7 @@ function loadHistory() {
                 <div class="context-menu-item" data-action="delete">Delete</div>
                 `;
                 historyConversation.appendChild(contextMenu);
-
-                contextMenu.style.left = `${e.clientX}px`;
-                if (contextMenu.offsetLeft + contextMenu.offsetWidth > window.innerWidth) {
-                    contextMenu.style.left = `${e.clientX - contextMenu.offsetWidth - 30}px`;
-                }
+                contextMenu.style.left = `${e.clientX - contextMenu.offsetWidth - 30}px`;
 
                 contextMenu.querySelectorAll('.context-menu-item').forEach(item => {
                     item.addEventListener('click', () => {
@@ -489,10 +485,12 @@ const container = document.querySelector('.container');
 const expand = document.querySelector('.expand');
 let isExpanded;
 
+
 if (window.matchMedia('(max-width: 600px)').matches) {
     isExpanded = false;
 } else {
     isExpanded = true;
+    expand.style.left = `${historyChats.offsetWidth + 5}px`;
 }
 
 expand.addEventListener('click', () => {
@@ -501,12 +499,13 @@ expand.addEventListener('click', () => {
     if (isExpanded) {
         historyChats.style.transform = 'translateX(0)';
         container.style.gridTemplateColumns = 'auto 1fr';
+        expand.style.left = `${historyChats.offsetWidth + 5}px`;
         if (window.matchMedia('(max-width: 600px)').matches) {
-            expand.style.transform = 'translate(-12px, -50%)';
+            expand.style.left = `${historyChats.offsetWidth - 20}px`;
         }
     } else {
         historyChats.style.transform = 'translateX(-100%)';
-        expand.style.transform = 'translate(13px, -50%)';
+        expand.style.left = '5px';
         if (!window.matchMedia('(max-width: 600px)').matches) {
             container.style.gridTemplateColumns = '0 1fr';
         }
@@ -527,7 +526,7 @@ function binaryToString(str) {
 exportHistory.addEventListener('click', () => {
     const messages = JSON.parse(localStorage.getItem('messages'));
     if (!messages || Object.keys(messages).length === 0) {
-        popupWindow('Error', '<div style="width: max-content; margin: 4px 6pc 4px 0; font-size: 16px;" class="temp-error-message">No chat history found</div>');
+        popupWindow('Error', '<div class="temp-error-message">No chat history found!</div>');
         document.querySelector('.temp-error-message').parentElement.style.display = 'block';
         return;
     }
@@ -536,7 +535,7 @@ exportHistory.addEventListener('click', () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'chat-history.ssch';
+    link.download = `chat-history___${new Date().toISOString()}.ssch`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -549,6 +548,13 @@ importHistory.addEventListener('click', () => {
     input.accept = '.ssch';
     input.addEventListener('change', async () => {
         const file = input.files[0];
+
+        if (file.name.split('.').pop() !== 'ssch') {
+            popupWindow('Error', '<div class="temp-error-message">Invalid file type!</div>');
+            document.querySelector('.temp-error-message').parentElement.style.display = 'block';
+            return;
+        }
+
         const text = binaryToString(await file.text());
         const messages = JSON.parse(text);
         localStorage.setItem('messages', JSON.stringify(messages));

@@ -34,7 +34,28 @@ body {
     grid-template-columns: auto 1fr;
     height: 100%;
     width: 100%;
-    transition: grid-template-columns 200ms ease-in-out;
+}
+
+.expand {
+    content: '';
+    display: block;
+    position: fixed;
+    background-color: #fff;
+    opacity: .3;
+    height: .5in;
+    width: var(--default-br-p);
+    border-radius: var(--default-br-p);
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 1;
+    transition: height 200ms, opacity 200ms, left 200ms cubic-bezier(0.42, 0, 0.82, 0.43);
+
+    &:hover {
+        opacity: .5;
+        height: .6in;
+    }
 }
 
 #history {
@@ -42,31 +63,11 @@ body {
     width: 4in;
     position: relative;
     padding: var(--default-br-p);
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: visible;
     transition: transform 200ms ease-in-out;
     z-index: 1;
-
-    .expand {
-        content: '';
-        display: block;
-        position: absolute;
-        background-color: #fff;
-        opacity: .3;
-        height: .5in;
-        width: var(--default-br-p);
-        border-radius: var(--default-br-p);
-        right: 0;
-        top: 50%;
-        transform: translate(13px, -50%);
-        cursor: pointer;
-        z-index: 1;
-        transition: 200ms;
-        transition-property: height, opacity;
-
-        &:hover {
-            opacity: .5;
-            height: .6in;
-        }
-    }
 
     .history-content {
         display: flex;
@@ -162,6 +163,7 @@ body {
 
         &.body {
             height: 100%;
+            overflow-y: auto;
         }
 
         &.footer button {
@@ -233,7 +235,7 @@ body {
     overflow: auto;
     height: 100%;
 
-    h2 {
+    .assistant-question {
         background: linear-gradient(to right, #750077, #fcb59d, #00ebf9, #fcb59d, #750077);
         width: max-content;
         background-clip: text;
@@ -403,7 +405,7 @@ table {
 
     .popup-content {
         background-color: var(--default-color);
-        border-radius: var(--default-br-p);
+        border-radius: calc(var(--default-br-p) * 2);
         border: 1px solid var(--default-border);
         animation: popup-content 200ms forwards;
 
@@ -414,6 +416,10 @@ table {
             align-items: center;
             padding: var(--default-br-p);
             padding-right: calc(var(--default-br-p) / 2);
+
+            .popup-title {
+                font-weight: bold;
+            }
 
             .popup-close {
                 border-radius: 50%;
@@ -439,6 +445,13 @@ table {
 
             &.popup-content-promise {
                 display: block;
+            }
+
+            .temp-error-message {
+                width: max-content;
+                margin: 4px 6pc 4px 0;
+                font-size: 18px;
+                font-weight: bold;
             }
         }
 
@@ -526,10 +539,6 @@ br {
         height: 100%;
         transform: translatex(-100%);
         z-index: 1;
-
-        .expand {
-            top: 45%;
-        }
 
         .column.body {
             height: calc(100% - 2.73in);
