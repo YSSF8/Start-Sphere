@@ -545,8 +545,13 @@ br {
         }
     }
 
+    .expand:hover {
+        opacity: .3;
+        height: .5in;
+    }
+
     #chat-interface {
-        width: calc(100% - .50in);
+        width: calc(100% - .3in);
     }
 }
 

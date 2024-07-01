@@ -490,8 +490,12 @@ br {
   #history .column.body {
     height: calc(100% - 2.73in);
   }
+  .expand:hover {
+    opacity: 0.3;
+    height: 0.5in;
+  }
   #chat-interface {
-    width: calc(100% - 0.5in);
+    width: calc(100% - 0.3in);
   }
 }
 ::-webkit-scrollbar {
