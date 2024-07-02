@@ -310,6 +310,7 @@ function loadHistory() {
 
         historyDots.addEventListener('click', e => {
             isOpen = !isOpen;
+            const dots = historyDots.querySelectorAll('.history-dot');
 
             if (isOpen) {
                 const contextMenu = document.createElement('div');
@@ -331,11 +332,13 @@ function loadHistory() {
                         }
                     });
                 });
+                dots.forEach(dot => dot.classList.add('_ctx-open'));
             } else {
                 const contextMenu = historyConversation.querySelector('.context-menu');
                 if (contextMenu) {
                     historyConversation.removeChild(contextMenu);
                 }
+                dots.forEach(dot => dot.classList.remove('_ctx-open'));
             }
         });
 
@@ -543,7 +546,7 @@ exportHistory.addEventListener('click', () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `chat-history___${new Date().toISOString()}.ssch`;
+    link.download = `history@${new Date().toISOString()}.ssch`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -563,10 +566,16 @@ importHistory.addEventListener('click', () => {
             return;
         }
 
-        const text = binaryToString(await file.text());
-        const messages = JSON.parse(text);
-        localStorage.setItem('messages', JSON.stringify(messages));
-        location.reload();
+        try {
+            const text = binaryToString(await file.text());
+            const messages = JSON.parse(text);
+            localStorage.setItem('messages', JSON.stringify(messages));
+            location.reload();
+        } catch (e) {
+            popupWindow('Error', '<div class="temp-error-message">Invalid file!</div>');
+            document.querySelector('.temp-error-message').parentElement.style.display = 'block';
+            return;
+        }
     });
     input.click();
     input.remove();

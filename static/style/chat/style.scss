@@ -132,12 +132,28 @@ body {
                 &:active>.history-dot {
                     background-color: var(--default-grey);
                 }
-
+                
                 .history-dot {
                     background-color: var(--default-white);
-                    border-radius: 50%;
+                    border-radius: var(--default-br-p);
                     width: 3px;
                     height: 3px;
+
+                    &._ctx-open {
+                        animation: dot-pulse 900ms linear infinite;
+    
+                        &:nth-child(1) {
+                            animation-delay: 0ms;
+                        }
+    
+                        &:nth-child(2) {
+                            animation-delay: 300ms;
+                        }
+    
+                        &:nth-child(3) {
+                            animation-delay: 600ms;
+                        }
+                    }
                 }
             }
 
@@ -150,6 +166,9 @@ body {
                 overflow: hidden;
                 border: 1px solid var(--default-border);
                 z-index: 1;
+                transform-origin: top right;
+                transition: transform 200ms;
+                animation: context-menu-fade-in 200ms forwards;
 
                 .context-menu-item {
                     padding: var(--default-br-p);
@@ -175,6 +194,28 @@ body {
                 color: var(--default-danger);
             }
         }
+    }
+}
+
+@keyframes dot-pulse {
+    0% {
+        background-color: var(--default-white);
+    }
+    50% {
+        background-color: var(--default-grey);
+    }
+    100% {
+        background-color: var(--default-white);
+    }
+}
+
+@keyframes context-menu-fade-in {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
     }
 }
 
