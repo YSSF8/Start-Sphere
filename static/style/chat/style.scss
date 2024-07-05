@@ -132,7 +132,7 @@ body {
                 &:active>.history-dot {
                     background-color: var(--default-grey);
                 }
-                
+
                 .history-dot {
                     background-color: var(--default-white);
                     border-radius: var(--default-br-p);
@@ -141,15 +141,15 @@ body {
 
                     &._ctx-open {
                         animation: dot-pulse 900ms linear infinite;
-    
+
                         &:nth-child(1) {
                             animation-delay: 0ms;
                         }
-    
+
                         &:nth-child(2) {
                             animation-delay: 300ms;
                         }
-    
+
                         &:nth-child(3) {
                             animation-delay: 600ms;
                         }
@@ -201,9 +201,11 @@ body {
     0% {
         background-color: var(--default-white);
     }
+
     50% {
         background-color: var(--default-grey);
     }
+
     100% {
         background-color: var(--default-white);
     }
@@ -284,6 +286,36 @@ body {
         background-size: 200%;
         animation: gradient-movement 5s linear infinite;
     }
+
+    .download-app {
+        background: var(--default-white);
+        background-size: 200%;
+        border: none;
+        padding: var(--default-br-p) calc(var(--default-br-p) * 3);
+        border-radius: 100px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        animation: gradient-movement 5s linear infinite;
+        transition: scale 200ms;
+
+        &:hover {
+            scale: 105%;
+        }
+
+        &:active {
+            scale: 80%;
+        }
+
+        * {
+            color: #000 !important;
+        }
+
+        span:last-child {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+    }
 }
 
 @keyframes gradient-movement {
@@ -337,12 +369,12 @@ body {
     .horizontal-view {
         display: flex;
         gap: 3px;
+        flex-wrap: wrap;
 
         .source {
             border: 1px solid var(--default-border);
             padding: var(--default-br-p);
             border-radius: var(--default-br-p);
-            margin-top: var(--default-br-p);
             color: var(--default-grey);
             text-decoration: none;
             font-size: 12px;

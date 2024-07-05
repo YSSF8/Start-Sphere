@@ -258,6 +258,31 @@ body {
   background-size: 200%;
   animation: gradient-movement 5s linear infinite;
 }
+.message-container .download-app {
+  background: var(--default-white);
+  background-size: 200%;
+  border: none;
+  padding: var(--default-br-p) calc(var(--default-br-p) * 3);
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  animation: gradient-movement 5s linear infinite;
+  transition: scale 200ms;
+}
+.message-container .download-app:hover {
+  scale: 105%;
+}
+.message-container .download-app:active {
+  scale: 80%;
+}
+.message-container .download-app * {
+  color: #000 !important;
+}
+.message-container .download-app span:last-child {
+  font-weight: bold;
+  text-transform: uppercase;
+}
 
 @keyframes gradient-movement {
   to {
@@ -302,12 +327,12 @@ body {
 .message .horizontal-view {
   display: flex;
   gap: 3px;
+  flex-wrap: wrap;
 }
 .message .horizontal-view .source {
   border: 1px solid var(--default-border);
   padding: var(--default-br-p);
   border-radius: var(--default-br-p);
-  margin-top: var(--default-br-p);
   color: var(--default-grey);
   text-decoration: none;
   font-size: 12px;
