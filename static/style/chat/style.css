@@ -345,6 +345,7 @@ body {
   padding: var(--default-br-p);
   border-radius: var(--default-br-p);
   margin-top: var(--default-br-p);
+  margin-bottom: calc(var(--default-br-p) / 2);
   cursor: pointer;
 }
 .message .option:hover {
