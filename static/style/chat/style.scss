@@ -18,6 +18,12 @@
     font-family: 'Montserrat', sans-serif;
     color: var(--default-white);
     -webkit-tap-highlight-color: transparent;
+
+    &,
+    &::before,
+    &::after {
+        box-sizing: border-box;
+    }
 }
 
 html,
@@ -66,6 +72,7 @@ body {
     max-height: 100%;
     overflow-y: auto;
     overflow-x: visible;
+    box-sizing: unset;
     transition: transform 200ms ease-in-out;
     z-index: 1;
 
@@ -104,6 +111,11 @@ body {
 
             &:hover>.history-name::after {
                 background: linear-gradient(to left, var(--default-color-b), var(--default-color-b), transparent);
+            }
+
+            .pin-icon {
+                margin-right: 5px;
+                filter: grayscale(1) brightness(10);
             }
 
             .history-name {
@@ -223,9 +235,10 @@ body {
 
 #chat-interface {
     background-color: transparent;
-    width: calc(100% - .65in);
+    width: 100%;
     height: calc(100vh - .65in);
     padding: 30px;
+    padding-bottom: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -250,6 +263,7 @@ body {
     width: 100%;
     height: 35%;
     resize: none;
+    box-sizing: unset;
 }
 
 .send {
@@ -275,14 +289,24 @@ body {
 }
 
 .message-container {
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     height: 100%;
 
+    &:has(center) {
+        box-sizing: unset;
+    }
+
     .assistant-question {
-        background: linear-gradient(to right, #750077, #fcb59d, #00ebf9, #fcb59d, #750077);
-        width: max-content;
+        background: linear-gradient(to right,
+                #750077,
+                #fcb59d,
+                #00ebf9,
+                #fcb59d,
+                #750077);
         background-clip: text;
         color: transparent;
+        width: max-content;
         background-size: 200%;
         animation: gradient-movement 5s linear infinite;
     }
@@ -326,6 +350,7 @@ body {
 
 .message {
     padding: var(--default-br-p);
+    width: 100%;
 
     .message-header {
         display: flex;
@@ -339,14 +364,43 @@ body {
         }
     }
 
+    .message-content {
+        max-width: 100%;
+        overflow-wrap: break-word;
+
+        pre,
+        code {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+    }
+
     .message-content p {
         margin: 0;
         padding: 0;
+
+        code {
+            background: var(--default-color-2);
+            padding: 2px;
+            border: 1px solid var(--default-border);
+            border-radius: 4px;
+        }
     }
 
     pre {
         border: 1px solid var(--default-border);
         border-radius: var(--default-br-p);
+        overflow-x: auto;
+        max-width: 100%;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+
+        code {
+            white-space: pre;
+            word-break: break-all;
+        }
 
         .code-header {
             background-color: var(--default-color-3);
@@ -370,20 +424,6 @@ body {
         display: flex;
         gap: 3px;
         flex-wrap: wrap;
-
-        .source {
-            border: 1px solid var(--default-border);
-            padding: var(--default-br-p);
-            border-radius: var(--default-br-p);
-            color: var(--default-grey);
-            text-decoration: none;
-            font-size: 12px;
-            transition: background 200ms;
-
-            &:hover {
-                background-color: #282828;
-            }
-        }
     }
 
     .option {
@@ -401,6 +441,23 @@ body {
             background-color: #8f4fd9;
         }
     }
+}
+
+.generating-text {
+    font-weight: bold;
+    background: linear-gradient(to right,
+            var(--default-grey),
+            var(--default-grey),
+            var(--default-grey),
+            var(--default-white),
+            var(--default-grey),
+            var(--default-grey),
+            var(--default-grey));
+    width: max-content;
+    background-clip: text;
+    color: transparent;
+    background-size: 200%;
+    animation: gradient-movement 5s linear infinite;
 }
 
 table {
@@ -450,6 +507,7 @@ table {
     align-items: center;
     scale: 0;
     opacity: 0;
+    box-sizing: unset;
     cursor: pointer;
     transition: 200ms;
     transition-property: background, scale, opacity;
@@ -560,6 +618,10 @@ table {
             }
         }
     }
+
+    * {
+        box-sizing: unset;
+    }
 }
 
 @keyframes popup {
@@ -595,6 +657,13 @@ table {
     }
 }
 
+.error-message {
+    background: rgba(128, 24, 24, .2);
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid var(--default-danger-3);
+}
+
 br {
     user-select: none;
 }
@@ -602,9 +671,12 @@ br {
 .hljs {
     border-radius: 0 0 var(--default-br-p) var(--default-br-p);
     max-height: 735px;
+    overflow-x: auto;
+    max-width: 100%;
+    display: block;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     #history {
         position: fixed;
         left: 0;
@@ -615,7 +687,7 @@ br {
         z-index: 1;
 
         .column.body {
-            height: calc(100% - 2.73in);
+            height: calc(100% - 2.56in);
         }
     }
 
@@ -626,6 +698,71 @@ br {
 
     #chat-interface {
         width: calc(100% - .3in);
+        padding-bottom: 30px;
+        padding-right: 0;
+    }
+
+    .assistant-question {
+        font-size: 1.35rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .context-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .context-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--default-color-2);
+        border-radius: var(--default-br-p) var(--default-br-p) 0 0;
+        padding: var(--default-br-p);
+        overflow-y: auto;
+        max-height: 50%;
+        z-index: 1001;
+        animation: context-menu-bottom-sheet-slide-in 200ms forwards;
+
+        &.dismiss {
+            animation: context-menu-bottom-sheet-slide-out 200ms forwards;
+        }
+
+        .context-menu-item {
+            padding: var(--default-br-p);
+            text-align: center;
+
+            &:hover {
+                background-color: var(--default-color-3);
+            }
+        }
+    }
+
+    @keyframes context-menu-bottom-sheet-slide-in {
+        from {
+            transform: translateY(100%);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes context-menu-bottom-sheet-slide-out {
+        from {
+            transform: translateY(0);
+        }
+
+        to {
+            transform: translateY(100%);
+        }
     }
 }
 
