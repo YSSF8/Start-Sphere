@@ -194,22 +194,68 @@ def suggestions():
 def chat():
     return render_template('chat.html')
 
+@app.route('/generate_image', methods=['POST'])
+def generate_image():
+    data = {
+        "messages": [
+            {
+                "id": "AY3DYDPs6-WBRIt3fBX8z",
+                "content": request.json.get('prompt'),
+                "role": "user"
+            }
+        ],
+        "id": "AY3DYDPs6-WBRIt3fBX8z",
+        "previewToken": None,
+        "userId": None,
+        "codeModelMode": True,
+        "agentMode": {
+            "mode": True,
+            "id": "ImageGenerationLV45LJp",
+            "name": "Image Generation"
+        },
+        "trendingAgentMode": {},
+        "isMicMode": False,
+        "maxTokens": 1024,
+        "playgroundTopP": None,
+        "playgroundTemperature": None,
+        "isChromeExt": False,
+        "githubToken": "",
+        "clickedAnswer2": False,
+        "clickedAnswer3": False,
+        "clickedForceWebSearch": False,
+        "visitFromDelta": False,
+        "mobileClient": False,
+        "userSelectedModel": None,
+        "validated": "00f37b34-a166-4efb-bce5-1312d87f2f94"
+    }
+
+    response = requests.post(blackbox_url, json=data, headers=headers)
+    return response.text
+
 @app.route('/message_ai', methods=['POST'])
 def message_ai():
     data = {
-    	"messages": request.json.get('messages'),
-    	"id": "gJP6OjF",
-    	"previewToken": None,
-    	"userId": "810628f1-054b-439c-b4df-e6161cb5d024",
-    	"codeModelMode": True,
-    	"agentMode": {},
-    	"trendingAgentMode": {},
-    	"isMicMode": False,
-    	"isChromeExt": False,
-    	"githubToken": None,
-    	"clickedAnswer2": False,
-    	"clickedAnswer3": False,
-    	"visitFromDelta": None
+        "messages": request.json.get('messages'),
+        "id": "SigaVZ3",
+        "previewToken": None,
+        "userId": None,
+        "codeModelMode": True,
+        "agentMode": {},
+        "trendingAgentMode": {},
+        "isMicMode": False,
+        "userSystemPrompt": None,
+        "maxTokens": 1024,
+        "playgroundTopP": 0.9,
+        "playgroundTemperature": 0.5,
+        "isChromeExt": False,
+        "githubToken": "",
+        "clickedAnswer2": False,
+        "clickedAnswer3": False,
+        "clickedForceWebSearch": False,
+        "visitFromDelta": False,
+        "mobileClient": False,
+        "userSelectedModel": "gpt-4o",
+        "validated": "00f37b34-a166-4efb-bce5-1312d87f2f94"
     }
 
     response = requests.post(blackbox_url, json=data, headers=headers)
