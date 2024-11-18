@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
@@ -231,6 +231,21 @@ def generate_image():
 
     response = requests.post(blackbox_url, json=data, headers=headers)
     return response.text
+
+@app.route('/proxy_image', methods=['GET'])
+def proxy_image():
+    image_url = request.args.get('url')
+    if not image_url:
+        return 'URL parameter is missing', 400
+        
+    try:
+        response = requests.get(image_url, stream=True)
+        return Response(
+            response.iter_content(chunk_size=8192),
+            content_type=response.headers['Content-Type']
+        )
+    except requests.exceptions.RequestException as e:
+        return f'An error occurred: {str(e)}', 500
 
 @app.route('/message_ai', methods=['POST'])
 def message_ai():
