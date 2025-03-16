@@ -325,6 +325,36 @@ body {
     background-position: 200%;
   }
 }
+.cot {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--default-br-p) / 2);
+}
+.cot .expand-cot {
+  all: unset;
+  width: -moz-max-content;
+  width: max-content;
+  background-color: var(--default-color-b);
+  padding: var(--default-br-p);
+  margin-top: var(--default-br-p);
+  border-radius: var(--default-br-p);
+  border: 1px solid var(--default-border);
+  cursor: pointer;
+}
+.cot .expand-cot:hover {
+  filter: brightness(1.1);
+}
+.cot .thoughts {
+  font-size: 14px;
+  margin: calc(var(--default-br-p) / 2.5) var(--default-br-p) var(--default-br-p) var(--default-br-p);
+  color: var(--default-grey);
+  overflow: hidden;
+  transition: height 250ms ease-out;
+}
+.cot .thoughts.collapsed {
+  height: 0;
+}
+
 .message {
   padding: var(--default-br-p);
   width: 100%;
@@ -747,6 +777,7 @@ br {
     padding: var(--default-br-p);
     border-radius: var(--default-br-p);
     text-align: center;
+    cursor: default;
   }
   .context-menu .context-menu-item:hover {
     background-color: var(--default-color-3);

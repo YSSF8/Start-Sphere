@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Sphere ∙ Settings</title>
+    <link rel="stylesheet" href="static/style/main/style.css">
+    <link rel="shortcut icon" href="static/images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="left-side">
+                <div id="logo"></div>
+            </div>
+            <div class="right-side">
+                <a href="/">Home</a>
+                <a href="/chat">Chat</a>
+            </div>
+        </div>
+        <div class="main settings-container">
+            <div class="settings-section">
+                <h2>Search Settings</h2>
+                <div class="setting-item">
+                    <label for="defaultEngine">Default Search Engine</label>
+                    <select id="defaultEngine"></select>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h2>Data Management</h2>
+                <div class="setting-item">
+                    <button class="danger-button" id="clearFavorites">Clear Favorites</button>
+                    <button class="danger-button" id="resetSettings">Reset All Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="static/script/settings.js"></script>
+</body>
+</html>
