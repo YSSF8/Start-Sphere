@@ -26,7 +26,6 @@ A modern web-based start page application with integrated search functionality, 
   - Powered by DeepSeek-R1 model
   - Chat history management
   - Code syntax highlighting
-  - LaTeX math support
   - Voice input support
   - Export/Import conversation history
 
